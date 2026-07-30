@@ -3,8 +3,11 @@ import type { IDisplayOptions, INodeProperties } from 'n8n-workflow';
 /**
  * Return All plus Limit, the n8n convention for list operations.
  *
- * Apdf paginates with page/per_page and reports the next page in links.next, so Return All
- * follows that link until it runs out, and Limit maps to per_page for a single request.
+ * Return All walks the pages by incrementing the "page" parameter and comparing meta's
+ * current_page with last_page. It deliberately does not follow links.next: Laravel builds
+ * those URLs without withQueryString(), so they carry only "page" — following them would
+ * silently drop filters like status and reset per_page from the second page onwards.
+ * Overriding one parameter of the original request keeps everything else intact.
  */
 export function listOptions(displayOptions: IDisplayOptions): INodeProperties[] {
 	return [
@@ -23,9 +26,13 @@ export function listOptions(displayOptions: IDisplayOptions): INodeProperties[] 
 					pagination: {
 						type: 'generic',
 						properties: {
-							continue: '={{ !!$response.body?.links?.next }}',
+							continue:
+								'={{ ($response.body?.meta?.current_page ?? 1) < ($response.body?.meta?.last_page ?? 1) }}',
 							request: {
-								url: '={{ $response.body?.links?.next ?? $request.url }}',
+								url: '={{ $request.url }}',
+								qs: {
+									page: '={{ ($response.body?.meta?.current_page ?? 1) + 1 }}',
+								},
 							},
 						},
 					},

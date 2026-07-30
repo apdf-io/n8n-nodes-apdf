@@ -119,6 +119,24 @@ describe('Apdf node', () => {
 		}
 	});
 
+	it('pages by incrementing page, not by following links.next', () => {
+		// Laravel builds links.next without withQueryString(), so those URLs carry only
+		// "page". Following them would drop filters like status from the second page on.
+		const returnAll = properties.filter((property) => property.name === 'returnAll');
+
+		expect(returnAll.length).toBeGreaterThan(0);
+
+		for (const property of returnAll) {
+			const pagination = property.routing?.operations?.pagination as {
+				properties?: { continue?: string; request?: { qs?: Record<string, string> } };
+			};
+
+			expect(JSON.stringify(pagination)).not.toContain('links');
+			expect(pagination.properties?.continue).toContain('last_page');
+			expect(pagination.properties?.request?.qs?.page).toContain('current_page');
+		}
+	});
+
 	it('picks documents from a list rather than asking for an ID', () => {
 		const pickers = properties.filter((property) => property.name === 'docId');
 
