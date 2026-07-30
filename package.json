@@ -1,7 +1,7 @@
 {
 	"name": "n8n-nodes-apdf",
 	"version": "0.1.0",
-	"description": "n8n node for Apdf \u2014 PDF tracking links, reader analytics and PDF processing",
+	"description": "n8n node for Apdf — PDF tracking links, reader analytics and PDF processing",
 	"license": "MIT",
 	"homepage": "https://apdf.io",
 	"keywords": [
@@ -50,6 +50,7 @@
 	"devDependencies": {
 		"@n8n/node-cli": "*",
 		"eslint": "9.32.0",
+		"n8n-core": "^2.16.1",
 		"prettier": "3.6.2",
 		"release-it": "^19.0.4",
 		"typescript": "5.9.2",
