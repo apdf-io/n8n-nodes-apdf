@@ -103,8 +103,12 @@ export function requestFor(
 				)
 			: value;
 
+	// Routing asks for collection fields by path, such as `options.webhook_url`.
 	const getNodeParameter = (name: string, _itemIndex?: number, fallback?: unknown) => {
-		const value = resolved[name] === undefined ? fallback : resolved[name];
+		const found = name
+			.split('.')
+			.reduce<unknown>((value, key) => (value as IDataObject | undefined)?.[key], resolved);
+		const value = found === undefined ? fallback : found;
 
 		return evaluate(value);
 	};

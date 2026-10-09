@@ -131,6 +131,7 @@ const cases: Array<{
 		url: '/pdf/file/merge',
 	},
 	{ resource: 'pdf', operation: 'compress', parameters: { file: 'https://e.test/a.pdf' }, method: 'POST', url: '/pdf/file/compress' },
+	{ resource: 'pdf', operation: 'convert', parameters: { file: 'https://e.test/a.docx' }, method: 'POST', url: '/pdf/file/convert' },
 	{
 		resource: 'pdf',
 		operation: 'toImage',

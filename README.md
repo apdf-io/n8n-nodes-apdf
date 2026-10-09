@@ -4,8 +4,8 @@ An n8n node for [Apdf](https://apdf.io) — the PDF engagement layer for apps an
 
 Share a PDF as a per-recipient tracking link, then find out who opened it, which pages they
 actually read, how long they stayed and what they typed into its forms. The same node also
-covers the full Apdf PDF toolset: create, merge, split, compress, OCR, encrypt and page
-operations.
+covers the full Apdf PDF toolset: create, convert from Office, merge, split, compress, OCR,
+encrypt and page operations.
 
 [n8n](https://n8n.io) is a [fair-code licensed](https://docs.n8n.io/reference/license/)
 workflow automation platform.
@@ -191,14 +191,17 @@ A **Recipient Name** is required; **Recipient Email** is optional.
 
 ### PDF
 
-Eighteen operations over the Apdf PDF API: **Create From HTML**, **Merge**, **Split**,
-**Compress**, **Convert to Image**, **Extract Pages**, **Delete Pages**, **Rotate Pages**,
+Nineteen operations over the Apdf PDF API: **Create From HTML**, **Convert From Office**,
+**Merge**, **Split**, **Compress**, **Convert to Image**, **Extract Pages**, **Delete Pages**, **Rotate Pages**,
 **Overlay Pages**, **Underlay Pages**, **Search Content**, **Read Content**, **OCR
 Convert**, **OCR Search Content**, **OCR Read Content**, **Add Security**, **Remove
 Security** and **Read Metadata**.
 
 Every operation takes its source as a publicly reachable URL and returns a new file. None of
 them modify the source, including **Delete Pages**.
+
+**Convert From Office** takes a Word, Excel, PowerPoint, OpenDocument or RTF file (docx, doc,
+xlsx, xls, pptx, ppt, odt, ods, odp, rtf) instead of a PDF.
 
 ### Automation
 
@@ -220,9 +223,10 @@ programmatically, for instance pointing them at systems outside n8n.
 
 ## Asynchronous operations
 
-Apdf runs heavy work on a queue. Six operations always return a job ID instead of a result:
+Apdf runs heavy work on a queue. Seven operations always return a job ID instead of a result:
 
 - Create From HTML
+- Convert From Office
 - Compress
 - Convert to Image
 - OCR Convert

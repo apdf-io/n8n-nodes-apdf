@@ -37,6 +37,21 @@ describe('the request the node sends', () => {
 		expect(options.body).toMatchObject({ file: 'https://example.com/a.pdf', name: 'Proposal' });
 	});
 
+	it('sends the Office file and webhook URL for Convert From Office', () => {
+		const { options } = build({
+			resource: 'pdf',
+			operation: 'convert',
+			file: 'https://example.com/report.docx',
+			options: { webhook_url: 'https://hooks.test/x' },
+		});
+
+		expect(options.url).toBe('/pdf/file/convert');
+		expect(options.body).toEqual({
+			file: 'https://example.com/report.docx',
+			webhook_url: 'https://hooks.test/x',
+		});
+	});
+
 	it('maps Limit onto per_page', () => {
 		const { options } = build({
 			resource: 'document',

@@ -10,7 +10,7 @@ import { rawOutput } from '../../shared/output';
  * repetition below is deliberate. Change all of them together.
  */
 
-/** Every operation except Create From HTML and Merge takes a single source file URL. */
+/** Every operation except Create From HTML, Convert From Office and Merge takes a single source PDF URL. */
 const singleFileOperations = [
 	'addSecurity',
 	'compress',
@@ -33,6 +33,7 @@ const singleFileOperations = [
 /** Operations the API always runs on a queue, so they return a job ID instead of a result. */
 const alwaysAsyncOperations = [
 	'compress',
+	'convert',
 	'create',
 	'ocrConvert',
 	'ocrRead',
@@ -110,6 +111,17 @@ export const pdfOperations: INodeProperties[] = [
 				description: 'Reduce the file size of a PDF. Always runs asynchronously.',
 				routing: {
 					request: { method: 'POST', url: '/pdf/file/compress' },
+					output: rawOutput,
+				},
+			},
+			{
+				name: 'Convert From Office',
+				value: 'convert',
+				action: 'Convert DOC/XLS/PPT to PDF',
+				description:
+					'Turn a Word, Excel, PowerPoint, OpenDocument or RTF file into a PDF. Always runs asynchronously.',
+				routing: {
+					request: { method: 'POST', url: '/pdf/file/convert' },
 					output: rawOutput,
 				},
 			},
@@ -287,6 +299,17 @@ export const pdfFields: INodeProperties[] = [
 		required: true,
 		displayOptions: showFor('pdf', singleFileOperations),
 		description: 'Publicly reachable URL of the source PDF',
+		routing: { send: { type: 'body', property: 'file' } },
+	},
+	{
+		displayName: 'File URL',
+		name: 'file',
+		type: 'string',
+		default: '',
+		required: true,
+		displayOptions: showFor('pdf', ['convert']),
+		description:
+			'Publicly reachable URL of the Office file: docx, doc, xlsx, xls, pptx, ppt, odt, ods, odp or rtf',
 		routing: { send: { type: 'body', property: 'file' } },
 	},
 	{
@@ -743,7 +766,7 @@ export const pdfFields: INodeProperties[] = [
 		[
 			webhookUrlOption(true),
 				],
-		showFor('pdf', ['compress', 'ocrConvert', 'ocrRead']),
+		showFor('pdf', ['compress', 'convert', 'ocrConvert', 'ocrRead']),
 	),
 
 	{
