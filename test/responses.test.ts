@@ -1,7 +1,12 @@
-import type { IDataObject } from 'n8n-workflow';
+import type {
+	DeclarativeRestApiSettings,
+	IDataObject,
+	IExecutePaginationFunctions,
+} from 'n8n-workflow';
 import { describe, expect, it } from 'vitest';
 import { Apdf } from '../nodes/Apdf/Apdf.node';
-import { evaluateExpression, postReceiveFor, requestFor } from './harness';
+import { fetchAllPages } from '../nodes/shared/pagination';
+import { postReceiveFor, requestFor } from './harness';
 
 const node = new Apdf();
 
@@ -93,39 +98,60 @@ describe('what the workflow receives', () => {
 });
 
 describe('Return All pagination', () => {
-	const pagination = () => {
+	/** Run the paging function against stubbed pages of the given sizes. */
+	const paginate = async (pageSizes: number[], qs: IDataObject = {}) => {
+		const requests: IDataObject[] = [];
+		const makeRoutingRequest = async (requestData: DeclarativeRestApiSettings.ResultOptions) => {
+			requests.push(requestData.options.qs as IDataObject);
+			const size = pageSizes[requests.length - 1] ?? 0;
+
+			return Array.from({ length: size }, (_, index) => ({ json: { index } }));
+		};
+		const requestData = {
+			options: { url: '/docs', qs },
+			preSend: [],
+			postReceive: [],
+			requestOperations: {},
+		} as unknown as DeclarativeRestApiSettings.ResultOptions;
+
+		const items = await fetchAllPages.call(
+			{ makeRoutingRequest } as unknown as IExecutePaginationFunctions,
+			requestData,
+		);
+
+		return { items, requests };
+	};
+
+	it('starts at page 1 and stops at the first short page', async () => {
+		const { items, requests } = await paginate([100, 100, 37]);
+
+		expect(items).toHaveLength(237);
+		expect(requests.map((qs) => qs.page)).toEqual([1, 2, 3]);
+	});
+
+	it('makes a single request when everything fits on one page', async () => {
+		const { items, requests } = await paginate([3]);
+
+		expect(items).toHaveLength(3);
+		expect(requests).toEqual([{ page: 1, per_page: 100 }]);
+	});
+
+	it('keeps the original filters on every page', async () => {
+		const { requests } = await paginate([100, 5], { status: 'archived' });
+
+		expect(requests).toEqual([
+			{ status: 'archived', page: 1, per_page: 100 },
+			{ status: 'archived', page: 2, per_page: 100 },
+		]);
+	});
+
+	it('is what Return All pages with', () => {
 		const { requestOperations } = requestFor(node, {
 			resource: 'document',
 			operation: 'getAll',
 			returnAll: true,
 		});
 
-		return requestOperations?.pagination as {
-			type: string;
-			properties: { continue: string; request: { qs: IDataObject } };
-		};
-	};
-
-	/** Evaluate a pagination expression against a stubbed response, using n8n's engine. */
-	const evaluate = (expression: string, body: IDataObject): unknown =>
-		evaluateExpression(expression, { $response: { body }, $request: { url: '/docs' } });
-
-	it('keeps going while pages remain', () => {
-		const { properties } = pagination();
-
-		expect(evaluate(properties.continue, { meta: { current_page: 1, last_page: 3 } })).toBe(true);
-		expect(evaluate(properties.continue, { meta: { current_page: 3, last_page: 3 } })).toBe(false);
-		expect(evaluate(properties.continue, {})).toBe(false);
-	});
-
-	it('asks for the next page number, so the other filters survive', () => {
-		const { properties } = pagination();
-
-		expect(evaluate(properties.request.qs.page as string, { meta: { current_page: 1 } })).toBe(2);
-		expect(evaluate(properties.request.qs.page as string, { meta: { current_page: 7 } })).toBe(8);
-	});
-
-	it('does not follow links.next, which drops the query string', () => {
-		expect(JSON.stringify(pagination())).not.toContain('links');
+		expect(requestOperations?.pagination).toBe(fetchAllPages);
 	});
 });

@@ -1,14 +1,43 @@
-import type { IDisplayOptions, INodeProperties } from 'n8n-workflow';
+import type {
+	DeclarativeRestApiSettings,
+	IDisplayOptions,
+	IExecutePaginationFunctions,
+	INodeExecutionData,
+	INodeProperties,
+} from 'n8n-workflow';
+
+/** The largest page the Apdf API serves, so Return All needs as few requests as possible. */
+const PAGE_SIZE = 100;
 
 /**
- * Return All plus Limit, the n8n convention for list operations.
- *
- * Return All walks the pages by incrementing the "page" parameter and comparing meta's
- * current_page with last_page. It deliberately does not follow links.next: Laravel builds
- * those URLs without withQueryString(), so they carry only "page" — following them would
- * silently drop filters like status and reset per_page from the second page onwards.
- * Overriding one parameter of the original request keeps everything else intact.
+ * Fetch every page of a list by setting "page" on the original request, until a page comes
+ * back short. It deliberately does not follow links.next: Laravel builds those URLs without
+ * withQueryString(), so they carry only "page" and would drop filters like status.
  */
+export async function fetchAllPages(
+	this: IExecutePaginationFunctions,
+	requestData: DeclarativeRestApiSettings.ResultOptions,
+): Promise<INodeExecutionData[]> {
+	const items: INodeExecutionData[] = [];
+
+	for (let page = 1; ; page++) {
+		const pageItems = await this.makeRoutingRequest({
+			...requestData,
+			options: {
+				...requestData.options,
+				qs: { ...requestData.options.qs, page, per_page: PAGE_SIZE },
+			},
+		});
+
+		items.push(...pageItems);
+
+		if (pageItems.length < PAGE_SIZE) {
+			return items;
+		}
+	}
+}
+
+/** Return All plus Limit, the n8n convention for list operations. */
 export function listOptions(displayOptions: IDisplayOptions): INodeProperties[] {
 	return [
 		{
@@ -23,19 +52,7 @@ export function listOptions(displayOptions: IDisplayOptions): INodeProperties[] 
 					paginate: '={{ $value }}',
 				},
 				operations: {
-					pagination: {
-						type: 'generic',
-						properties: {
-							continue:
-								'={{ ($response.body?.meta?.current_page ?? 1) < ($response.body?.meta?.last_page ?? 1) }}',
-							request: {
-								url: '={{ $request.url }}',
-								qs: {
-									page: '={{ ($response.body?.meta?.current_page ?? 1) + 1 }}',
-								},
-							},
-						},
-					},
+					pagination: fetchAllPages,
 				},
 			},
 		},

@@ -5,6 +5,7 @@ import { Apdf } from '../nodes/Apdf/Apdf.node';
 import { ApdfTrigger } from '../nodes/Apdf/ApdfTrigger.node';
 import { triggerEvents } from '../nodes/shared/events';
 import { describeError } from '../nodes/shared/output';
+import { fetchAllPages } from '../nodes/shared/pagination';
 
 type OperationOption = INodePropertyOptions & {
 	action?: string;
@@ -119,7 +120,7 @@ describe('Apdf node', () => {
 		}
 	});
 
-	it('pages by incrementing page, not by following links.next', () => {
+	it('pages every list with the paging function, not by following links.next', () => {
 		// Laravel builds links.next without withQueryString(), so those URLs carry only
 		// "page". Following them would drop filters like status from the second page on.
 		const returnAll = properties.filter((property) => property.name === 'returnAll');
@@ -127,13 +128,7 @@ describe('Apdf node', () => {
 		expect(returnAll.length).toBeGreaterThan(0);
 
 		for (const property of returnAll) {
-			const pagination = property.routing?.operations?.pagination as {
-				properties?: { continue?: string; request?: { qs?: Record<string, string> } };
-			};
-
-			expect(JSON.stringify(pagination)).not.toContain('links');
-			expect(pagination.properties?.continue).toContain('last_page');
-			expect(pagination.properties?.request?.qs?.page).toContain('current_page');
+			expect(property.routing?.operations?.pagination).toBe(fetchAllPages);
 		}
 	});
 
