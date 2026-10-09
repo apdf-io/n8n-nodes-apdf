@@ -1,4 +1,4 @@
-# n8n-nodes-apdf
+# @apdf/n8n-nodes-apdf
 
 An n8n node for [Apdf](https://apdf.io) — the PDF engagement layer for apps and agents.
 
@@ -23,7 +23,7 @@ workflow automation platform.
 
 Follow the
 [community node installation guide](https://docs.n8n.io/integrations/community-nodes/installation/)
-and install `n8n-nodes-apdf`.
+and install `@apdf/n8n-nodes-apdf`.
 
 ## Credentials
 

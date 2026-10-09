@@ -1,5 +1,5 @@
 {
-	"node": "n8n-nodes-apdf.apdfTrigger",
+	"node": "@apdf/n8n-nodes-apdf.apdfTrigger",
 	"nodeVersion": "1.0",
 	"codexVersion": "1.0",
 	"categories": [

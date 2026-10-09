@@ -1,5 +1,5 @@
 {
-	"name": "n8n-nodes-apdf",
+	"name": "@apdf/n8n-nodes-apdf",
 	"version": "0.1.0",
 	"description": "n8n node for Apdf — PDF tracking links, reader analytics and PDF processing",
 	"license": "MIT",
@@ -33,8 +33,12 @@
 		"test": "vitest run",
 		"test:watch": "vitest"
 	},
+	"publishConfig": {
+		"access": "public"
+	},
 	"files": [
-		"dist"
+		"dist",
+		"!dist/tsconfig.tsbuildinfo"
 	],
 	"n8n": {
 		"n8nNodesApiVersion": 1,
