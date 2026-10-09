@@ -114,7 +114,6 @@ export class ApdfTrigger implements INodeType {
 				path: 'webhook',
 			},
 		],
-		usableAsTool: false,
 		properties: [
 			{
 				displayName: 'Events',
