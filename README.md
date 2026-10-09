@@ -54,7 +54,9 @@ This package ships two nodes:
 The trigger receives the webhook that an Apdf automation sends when a reader does something.
 
 Automations, and so this trigger, need a **Pro** or **Business** plan. On the free Hobby plan
-the trigger never fires. See [pricing](https://apdf.io/pricing) for the limits of each plan.
+Apdf refuses to create the automation, so activating the workflow fails with an error. The
+same happens once the plan's limit of active automations is reached. See
+[pricing](https://apdf.io/pricing) for the limits of each plan.
 
 ### Setup
 
@@ -229,7 +231,9 @@ Creating one takes a **Name**, one or more **Events** and a **Webhook URL**. Set
 *Specific Documents* to narrow it to given IDs, add **Conditions** to fire only past a
 threshold, and add **Webhook Headers** so your endpoint can authenticate the call.
 
-Like the trigger, automations only fire on a Pro or Business plan.
+Like the trigger, this needs a Pro or Business plan. **Create**, **Activate** and
+**Duplicate** fail with an error on the Hobby plan or once the plan's limit of active
+automations is reached.
 
 If you only want a workflow to react to readers, use the **Apdf Trigger** instead — it creates
 and removes its own automation. Use this resource when you are managing automations
