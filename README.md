@@ -53,6 +53,9 @@ This package ships two nodes:
 
 The trigger receives the webhook that an Apdf automation sends when a reader does something.
 
+Automations, and so this trigger, need a **Pro** or **Business** plan. On the free Hobby plan
+the trigger never fires. See [pricing](https://apdf.io/pricing) for the limits of each plan.
+
 ### Setup
 
 The trigger registers itself. Pick the events you care about and activate the workflow — the
@@ -70,7 +73,9 @@ reactivating the workflow recreates it.
 
 Under **Options** you can set an **Auth Header Value**. The node sends it to Apdf as a
 webhook header and rejects any incoming request that does not carry it — worth setting, since
-the webhook URL is otherwise the only thing protecting the endpoint.
+the webhook URL is otherwise the only thing protecting the endpoint. **Auth Header Name**
+changes which header carries it, and **Automation Name** overrides the name the automation
+gets in Apdf.
 
 ### Events
 
@@ -117,15 +122,26 @@ The trigger emits the automation payload unchanged:
     "recipient": { "name": "Jane Doe", "email": "jane@example.com" },
     "data": { "page": 5, "duration_ms": 45000 }
   },
-  "session": { "total_duration_ms": 182000, "pages_viewed": 8, "completion_rate": 0.67 },
+  "session": { "total_duration_ms": 182000, "pages_viewed": 8, "completion_rate": 66.7 },
   "timestamp": "2026-07-28T12:00:00+00:00"
 }
 ```
 
-`event.data` varies by event. Page events carry `page` and `duration_ms`, `link:clicked`
-carries the `url`, `form:submit` carries the submitted `fields`, and annotation events carry
-the annotation `type` and comment. Document open, download and print events have no extra
-data.
+`session.completion_rate` is a percentage of the document's pages. `event.recipient` is
+`null` when Apdf cannot tie the reader to a tracking link.
+
+`event.data` varies by event:
+
+| Event                                  | `event.data`                                                        |
+| -------------------------------------- | ------------------------------------------------------------------- |
+| Page Viewed                            | `page`                                                              |
+| Page Read, Page Left                   | `page`, `duration_ms`                                               |
+| Text Copied                            | `page`, `text`                                                      |
+| Link Clicked                           | `page`, `url`, `text`, `is_internal`                                |
+| Form Submitted                         | `fields`                                                            |
+| Annotation Created, Annotation Updated | `page`, `type`, `comment_text`, `comment_author`, `annotated_text`  |
+| Annotation Deleted                     | `page`                                                              |
+| Document Opened, Downloaded, Printed   | `null`                                                              |
 
 ### Example
 
@@ -192,10 +208,10 @@ A **Recipient Name** is required; **Recipient Email** is optional.
 ### PDF
 
 Nineteen operations over the Apdf PDF API: **Create From HTML**, **Convert From Office**,
-**Merge**, **Split**, **Compress**, **Convert to Image**, **Extract Pages**, **Delete Pages**, **Rotate Pages**,
-**Overlay Pages**, **Underlay Pages**, **Search Content**, **Read Content**, **OCR
-Convert**, **OCR Search Content**, **OCR Read Content**, **Add Security**, **Remove
-Security** and **Read Metadata**.
+**Merge**, **Split**, **Compress**, **Convert to Image**, **Extract Pages**, **Delete
+Pages**, **Rotate Pages**, **Overlay Pages**, **Underlay Pages**, **Search Content**,
+**Read Content**, **OCR Convert**, **OCR Search Content**, **OCR Read Content**, **Add
+Security**, **Remove Security** and **Read Metadata**.
 
 Every operation takes its source as a publicly reachable URL and returns a new file. None of
 them modify the source, including **Delete Pages**.
@@ -212,6 +228,8 @@ for the delivery history.
 Creating one takes a **Name**, one or more **Events** and a **Webhook URL**. Set **Scope** to
 *Specific Documents* to narrow it to given IDs, add **Conditions** to fire only past a
 threshold, and add **Webhook Headers** so your endpoint can authenticate the call.
+
+Like the trigger, automations only fire on a Pro or Business plan.
 
 If you only want a workflow to react to readers, use the **Apdf Trigger** instead — it creates
 and removes its own automation. Use this resource when you are managing automations
