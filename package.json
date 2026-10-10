@@ -1,6 +1,6 @@
 {
 	"name": "@apdf/n8n-nodes-apdf",
-	"version": "0.1.5",
+	"version": "0.1.6",
 	"description": "n8n node for Apdf — PDF tracking links, reader analytics and PDF processing",
 	"license": "MIT",
 	"homepage": "https://apdf.io",
