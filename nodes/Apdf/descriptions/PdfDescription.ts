@@ -657,11 +657,11 @@ export const pdfFields: INodeProperties[] = [
 	optionsCollection(
 		[
 			{
-				displayName: 'From Page',
+				displayName: 'Overlay or Underlay Pages',
 				name: 'from',
 				type: 'string',
 				default: '',
-				description: 'First page to apply it to. Page numbers and ranges, for example 1,3-5. Use z for the last page and rN for the Nth page from the end.',
+				description: 'Which pages of the overlay or underlay file to use, in order. Leave empty to use all of them. Page numbers and ranges, for example 1,3-5. Use z for the last page and rN for the Nth page from the end.',
 				routing: { send: { type: 'body', property: 'from' } },
 			},
 			{
@@ -670,16 +670,16 @@ export const pdfFields: INodeProperties[] = [
 				type: 'string',
 				default: '',
 				description:
-					'Which pages of the overlay or underlay file to cycle through. Page numbers and ranges, for example 1,3-5. Use z for the last page and rN for the Nth page from the end.',
+					'Pages of the overlay or underlay file to repeat once the ones above run out. Page numbers and ranges, for example 1,3-5. Use z for the last page and rN for the Nth page from the end.',
 				routing: { send: { type: 'body', property: 'repeat' } },
 			},
 			asyncOption(),
 			{
-				displayName: 'To Page',
+				displayName: 'Target Pages',
 				name: 'to',
 				type: 'string',
 				default: '',
-				description: 'Last page to apply it to. Page numbers and ranges, for example 1,3-5. Use z for the last page and rN for the Nth page from the end.',
+				description: 'Which pages of the source PDF get the overlay or underlay. Leave empty for every page. Page numbers and ranges, for example 1,3-5. Use z for the last page and rN for the Nth page from the end.',
 				routing: { send: { type: 'body', property: 'to' } },
 			},
 			webhookUrlOption(),
