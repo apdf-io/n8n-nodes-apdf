@@ -57,7 +57,7 @@ export class ApdfApi implements ICredentialType {
 	test: ICredentialTestRequest = {
 		request: {
 			baseURL: '={{$credentials.baseUrl}}',
-			url: '/docs',
+			url: '/me',
 		},
 	};
 }

@@ -38,7 +38,7 @@ The **Base URL** field defaults to `https://apdf.io/api` and only needs changing
 Apdf on another host.
 
 Apdf sends the token as `Authorization: Bearer <token>`. The credential test calls
-`GET /docs`, so a valid token with an accessible workspace returns success immediately.
+`GET /me`, which returns the user and workspace the token acts as.
 
 ## Nodes
 
