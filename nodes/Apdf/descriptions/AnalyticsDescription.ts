@@ -19,9 +19,20 @@ export const analyticsOperations: INodeProperties[] = [
 				name: 'Get Annotations',
 				value: 'getAnnotations',
 				action: 'Get document annotations',
-				description: 'List the highlights and comments readers left on a document',
+				description: 'Retrieve the highlights and comments readers left on a document',
 				routing: {
 					request: { method: 'GET', url: '=/docs/{{$parameter.docId}}/annotations' },
+					output: resourceOutput,
+				},
+			},
+			{
+				name: 'Get Document Analytics',
+				value: 'get',
+				action: 'Get document analytics',
+				description:
+					'Retrieve the engagement totals of a document: sessions, readers, completion rate and downloads',
+				routing: {
+					request: { method: 'GET', url: '=/docs/{{$parameter.docId}}/analytics' },
 					output: resourceOutput,
 				},
 			},
@@ -29,20 +40,9 @@ export const analyticsOperations: INodeProperties[] = [
 				name: 'Get Form Submissions',
 				value: 'getFormSubmissions',
 				action: 'Get document form submissions',
-				description: 'List what readers typed into the forms in a document',
+				description: 'Retrieve what readers typed into the forms in a document',
 				routing: {
 					request: { method: 'GET', url: '=/docs/{{$parameter.docId}}/form-submissions' },
-					output: resourceOutput,
-				},
-			},
-			{
-				name: 'Get KPIs',
-				value: 'get',
-				action: 'Get document analytics',
-				description:
-					'Get aggregate engagement for a document: sessions, viewers, completion rate and downloads',
-				routing: {
-					request: { method: 'GET', url: '=/docs/{{$parameter.docId}}/analytics' },
 					output: resourceOutput,
 				},
 			},
@@ -50,7 +50,7 @@ export const analyticsOperations: INodeProperties[] = [
 				name: 'Get Session',
 				value: 'getSession',
 				action: 'Get reading session',
-				description: 'Get one reading session, including its per-page detail',
+				description: 'Retrieve a reading session, including its per-page detail',
 				routing: {
 					request: {
 						method: 'GET',
@@ -63,7 +63,7 @@ export const analyticsOperations: INodeProperties[] = [
 				name: 'Get Sessions',
 				value: 'getSessions',
 				action: 'Get reading sessions',
-				description: 'List the reading sessions recorded for a document',
+				description: 'Retrieve a list of the reading sessions of a document',
 				routing: {
 					request: { method: 'GET', url: '=/docs/{{$parameter.docId}}/analytics/sessions' },
 					output: resourceOutput,
@@ -83,7 +83,7 @@ export const analyticsFields: INodeProperties[] = [
 		default: '',
 		required: true,
 		displayOptions: showFor('analytics', ['getSession']),
-		description: 'The ID of the reading session, as returned by Get Sessions',
+		description: "The ID of the reading session, as returned by 'Get Sessions'",
 	},
 	...listOptions(showFor('analytics', paginatedOperations)),
 ];

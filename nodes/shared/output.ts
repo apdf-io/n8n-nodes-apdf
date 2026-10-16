@@ -68,7 +68,7 @@ export function describeError(status: number, body: IDataObject): ErrorDetails {
 	if (status === 429) {
 		return {
 			message: 'Too many requests to Apdf',
-			description: 'Slow the workflow down, or retry on failure.',
+			description: "Slow the workflow down, or turn on 'Retry On Fail' in the node settings.",
 		};
 	}
 
@@ -116,7 +116,20 @@ export const resourceOutput: INodeRequestOutput = {
 	postReceive: [handleApdfError, unwrapData],
 };
 
-/** What the PDF, job and delete endpoints return: readable errors, payload as sent. */
+/** What the PDF and job endpoints return: readable errors, payload as sent. */
 export const rawOutput: INodeRequestOutput = {
 	postReceive: [handleApdfError],
+};
+
+/**
+ * Apdf answers a delete with an empty body, so the item says what happened instead, as n8n
+ * nodes do for every delete.
+ */
+async function markDeleted(): Promise<INodeExecutionData[]> {
+	return [{ json: { deleted: true } }];
+}
+
+/** What a delete returns: readable errors, then a single { deleted: true } item. */
+export const deleteOutput: INodeRequestOutput = {
+	postReceive: [handleApdfError, markDeleted],
 };

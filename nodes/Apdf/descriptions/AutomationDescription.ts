@@ -2,7 +2,7 @@ import type { INodeProperties } from 'n8n-workflow';
 import { showFor } from '../../shared/display';
 import { triggerEvents } from '../../shared/events';
 import { conditionsCollection } from '../../shared/fields';
-import { rawOutput, resourceOutput } from '../../shared/output';
+import { deleteOutput, resourceOutput } from '../../shared/output';
 import { listOptions } from '../../shared/pagination';
 
 /** Operations that address one existing automation through its ID in the path. */
@@ -33,7 +33,7 @@ export const automationOperations: INodeProperties[] = [
 				name: 'Create',
 				value: 'create',
 				action: 'Create automation',
-				description: 'Call a webhook whenever readers do something to your documents',
+				description: 'Create a new automation that calls a webhook when readers act on your documents',
 				routing: {
 					request: { method: 'POST', url: '/automations' },
 					output: resourceOutput,
@@ -43,7 +43,7 @@ export const automationOperations: INodeProperties[] = [
 				name: 'Deactivate',
 				value: 'deactivate',
 				action: 'Deactivate automation',
-				description: 'Stop an automation firing without deleting it',
+				description: 'Stop an automation from firing without deleting it',
 				routing: {
 					request: {
 						method: 'POST',
@@ -56,10 +56,10 @@ export const automationOperations: INodeProperties[] = [
 				name: 'Delete',
 				value: 'delete',
 				action: 'Delete automation',
-				description: 'Permanently remove an automation and its execution history',
+				description: 'Delete an automation permanently, with its execution history',
 				routing: {
 					request: { method: 'DELETE', url: '=/automations/{{$parameter.automationId}}' },
-					output: rawOutput,
+					output: deleteOutput,
 				},
 			},
 			{
@@ -79,7 +79,7 @@ export const automationOperations: INodeProperties[] = [
 				name: 'Get',
 				value: 'get',
 				action: 'Get automation',
-				description: 'Get a single automation by its ID',
+				description: 'Retrieve an automation',
 				routing: {
 					request: { method: 'GET', url: '=/automations/{{$parameter.automationId}}' },
 					output: resourceOutput,
@@ -89,7 +89,7 @@ export const automationOperations: INodeProperties[] = [
 				name: 'Get Executions',
 				value: 'getExecutions',
 				action: 'Get automation executions',
-				description: 'List when automations fired and what they delivered',
+				description: 'Retrieve a list of automation executions: when automations fired and what they delivered',
 				routing: {
 					request: { method: 'GET', url: '/automations/executions' },
 					output: resourceOutput,
@@ -99,7 +99,7 @@ export const automationOperations: INodeProperties[] = [
 				name: 'Get Many',
 				value: 'getAll',
 				action: 'Get many automations',
-				description: 'List the automations configured in the workspace',
+				description: 'Retrieve a list of automations',
 				routing: {
 					request: { method: 'GET', url: '/automations' },
 					output: resourceOutput,
@@ -118,7 +118,7 @@ export const automationFields: INodeProperties[] = [
 		default: '',
 		required: true,
 		displayOptions: showFor('automation', operationsNeedingAutomationId),
-		description: 'The ID of the automation, as returned by Get Many',
+		description: "The ID of the automation, as returned by 'Get Many'",
 	},
 	{
 		displayName: 'Name',
@@ -127,7 +127,7 @@ export const automationFields: INodeProperties[] = [
 		default: '',
 		required: true,
 		displayOptions: showFor('automation', ['create']),
-		description: 'How the automation is labelled in the Apdf dashboard',
+		description: 'How the automation is labeled in the Apdf dashboard',
 		routing: { send: { type: 'body', property: 'name' } },
 	},
 	{
@@ -170,7 +170,7 @@ export const automationFields: INodeProperties[] = [
 		type: 'string',
 		default: '',
 		required: true,
-		placeholder: '48927-c7621-ec3c0',
+		placeholder: 'e.g. 48927-c7621-ec3c0',
 		displayOptions: showFor('automation', ['create'], { scope: ['specific'] }),
 		description: 'Comma-separated document IDs the automation watches',
 		routing: {
@@ -210,7 +210,8 @@ export const automationFields: INodeProperties[] = [
 						name: 'name',
 						type: 'string',
 						default: '',
-						description: 'The header name, for example X-Apdf-Secret',
+						placeholder: 'e.g. X-Apdf-Secret',
+						description: 'The name of the header',
 					},
 					{
 						displayName: 'Value',

@@ -46,7 +46,7 @@ This package ships two nodes:
 
 | Node             | Purpose                                                              |
 | ---------------- | -------------------------------------------------------------------- |
-| **Apdf Trigger** | Starts a workflow when someone interacts with a PDF you shared       |
+| **Apdf Trigger** | Starts a workflow when a reader interacts with a document you shared |
 | **Apdf**         | Reads engagement data and runs PDF operations                        |
 
 ## Apdf Trigger
@@ -86,18 +86,18 @@ selected.
 
 | Event                | Fires when                                          |
 | -------------------- | --------------------------------------------------- |
-| Document Opened      | A viewer opens the PDF                              |
-| Document Downloaded  | A viewer downloads the PDF                          |
-| Document Printed     | A viewer prints the PDF                             |
-| Page Viewed          | A viewer navigates to a page                        |
-| Page Read            | A viewer stays on a page, measured every 15 seconds  |
-| Page Left            | A viewer navigates away from a page                 |
-| Text Copied          | A viewer copies text from the PDF                   |
-| Link Clicked         | A viewer clicks a link in the PDF                   |
-| Form Submitted       | A viewer submits a form in the PDF                  |
-| Annotation Created   | A viewer creates an annotation                      |
-| Annotation Updated   | A viewer modifies an annotation                     |
-| Annotation Deleted   | A viewer removes an annotation                      |
+| Document Opened      | A reader opens the document                         |
+| Document Downloaded  | A reader downloads the document                     |
+| Document Printed     | A reader prints the document                        |
+| Page Viewed          | A reader navigates to a page                        |
+| Page Read            | A reader stays on a page, measured every 15 seconds |
+| Page Left            | A reader navigates away from a page                 |
+| Text Copied          | A reader copies text from the document              |
+| Link Clicked         | A reader clicks a link in the document              |
+| Form Submitted       | A reader submits a form in the document             |
+| Annotation Created   | A reader creates an annotation                      |
+| Annotation Updated   | A reader modifies an annotation                     |
+| Annotation Deleted   | A reader removes an annotation                      |
 
 Document and page events — opened, downloaded, printed, viewed, read and left — trigger an
 automation **once per reading session**, even where the underlying measurement repeats. Page
@@ -192,20 +192,20 @@ Creating a document takes a publicly reachable **File URL** and a **Name**.
 
 ### Tracking Link
 
-Mint one link per recipient so that reading activity is attributed to a person rather than an
-anonymous viewer. Create, list, delete, activate and deactivate links.
+Create one link per recipient so that reading activity is attributed to a person rather than an
+anonymous reader. Create, list, delete, activate and deactivate links.
 
 A **Recipient Name** is required; **Recipient Email** is optional.
 
 ### Analytics
 
-| Operation             | Returns                                                             |
-| --------------------- | ------------------------------------------------------------------- |
-| Get KPIs              | Sessions, viewers, completion rate and downloads for a document     |
-| Get Sessions          | The reading sessions recorded for a document                        |
-| Get Session           | One session, including its per-page detail                          |
-| Get Annotations       | Highlights and comments readers left                                |
-| Get Form Submissions  | What readers typed into the document's forms                        |
+| Operation              | Returns                                                         |
+| ---------------------- | --------------------------------------------------------------- |
+| Get Document Analytics | Sessions, readers, completion rate and downloads for a document |
+| Get Sessions           | The reading sessions recorded for a document                    |
+| Get Session            | One session, including its per-page detail                      |
+| Get Annotations        | Highlights and comments readers left                            |
+| Get Form Submissions   | What readers typed into the document's forms                    |
 
 ### PDF
 

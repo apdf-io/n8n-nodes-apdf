@@ -81,7 +81,7 @@ const webhookUrlOption = (alwaysAsync = false): INodeProperties => ({
 	type: 'string',
 	default: '',
 	description: alwaysAsync
-		? 'Called when the job finishes, instead of polling Check Status'
+		? "Called when the job finishes, instead of polling 'Check Status'"
 		: 'Called when an asynchronous job finishes',
 	routing: { send: { type: 'body', property: 'webhook_url' } },
 });
@@ -352,7 +352,7 @@ export const pdfFields: INodeProperties[] = [
 						type: 'string',
 						default: '',
 						description:
-							'Optional subset of pages to take from this file. Page numbers and ranges, for example 1,3-5. Use z for the last page and rN for the Nth page from the end.',
+							'Which pages to take from this file. Leave empty for every page. Page numbers and ranges, for example 1,3-5. Use z for the last page and rN for the Nth page from the end.',
 					},
 				],
 			},
@@ -416,7 +416,8 @@ export const pdfFields: INodeProperties[] = [
 		default: '',
 		required: true,
 		displayOptions: showFor('pdf', ['deletePages', 'extractPages']),
-		description: 'Page numbers and ranges, for example 1,3-5. Use z for the last page and rN for the Nth page from the end.',
+		description:
+			'Which pages to remove or keep. Page numbers and ranges, for example 1,3-5. Use z for the last page and rN for the Nth page from the end.',
 		routing: { send: { type: 'body', property: 'pages' } },
 	},
 	{
@@ -504,7 +505,7 @@ export const pdfFields: INodeProperties[] = [
 				name: 'format',
 				type: 'options',
 				default: 'a4',
-				description: 'Paper size. Ignored when width and height are given.',
+				description: "Paper size. Ignored when 'Width' and 'Height' are set.",
 				options: [
 					{ name: 'A0', value: 'a0' },
 					{ name: 'A1', value: 'a1' },
@@ -533,7 +534,7 @@ export const pdfFields: INodeProperties[] = [
 				name: 'height',
 				type: 'number',
 				default: 0,
-				description: 'Custom page height. Must be set together with width.',
+				description: "Custom page height. Must be set together with 'Width'.",
 				routing: { send: { type: 'body', property: 'height' } },
 			},
 			{
@@ -594,7 +595,7 @@ export const pdfFields: INodeProperties[] = [
 				name: 'unit',
 				type: 'options',
 				default: 'px',
-				description: 'The unit that width, height and margins are given in',
+				description: "The unit of 'Width', 'Height' and the margins",
 				options: [
 					{ name: 'Centimeters', value: 'cm' },
 					{ name: 'Inches', value: 'in' },
@@ -609,7 +610,7 @@ export const pdfFields: INodeProperties[] = [
 				name: 'width',
 				type: 'number',
 				default: 0,
-				description: 'Custom page width. Must be set together with height.',
+				description: "Custom page width. Must be set together with 'Height'.",
 				routing: { send: { type: 'body', property: 'width' } },
 			},
 				],
@@ -665,7 +666,7 @@ export const pdfFields: INodeProperties[] = [
 				routing: { send: { type: 'body', property: 'from' } },
 			},
 			{
-				displayName: 'Repeat',
+				displayName: 'Repeat Pages',
 				name: 'repeat',
 				type: 'string',
 				default: '',
@@ -694,7 +695,7 @@ export const pdfFields: INodeProperties[] = [
 				name: 'case',
 				type: 'boolean',
 				default: false,
-				description: 'Whether the search must match capitalisation exactly',
+				description: 'Whether the search must match capitalization exactly',
 				routing: { send: { type: 'body', property: 'case' } },
 			},
 			{
@@ -720,7 +721,7 @@ export const pdfFields: INodeProperties[] = [
 				type: 'string',
 				typeOptions: { password: true },
 				default: '',
-				description: 'Password a reader needs to open the PDF. Omit to leave it openable.',
+				description: 'Password a reader needs to open the PDF. Leave empty to let anyone open it.',
 				routing: { send: { type: 'body', property: 'user_password' } },
 			},
 			webhookUrlOption(),
@@ -770,14 +771,15 @@ export const pdfFields: INodeProperties[] = [
 	),
 
 	{
-		displayName: 'This Operation Always Runs Asynchronously and Returns a Job ID. Use the Job → Check Status Operation, or Set a Webhook URL, to Get the Result.',
+		displayName:
+			"This operation always runs asynchronously and returns a job ID. Use 'Job → Check Status', or set a 'Webhook URL', to get the result.",
 		name: 'asyncNotice',
 		type: 'notice',
 		default: '',
 		displayOptions: showFor('pdf', alwaysAsyncOperations),
 	},
 	{
-		displayName: 'Optional Async Operations Return a Job ID Only When Run Asynchronously Is Enabled.',
+		displayName: "This operation returns a job ID only when 'Run Asynchronously' is enabled.",
 		name: 'optionalAsyncNotice',
 		type: 'notice',
 		default: '',

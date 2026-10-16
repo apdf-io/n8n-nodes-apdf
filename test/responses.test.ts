@@ -43,6 +43,20 @@ describe('what the workflow receives', () => {
 		expect(items).toEqual([{ doc_id: 'aaa-111', name: 'One' }]);
 	});
 
+	it.each([
+		['document', { docId: 'aaa-111' }],
+		['link', { docId: 'aaa-111', token: 'tok123' }],
+		['automation', { automationId: 'auto-1' }],
+	])('confirms a %s delete with a single deleted item', async (resource, parameters) => {
+		const items = await postReceiveFor(
+			node,
+			{ resource, operation: 'delete', ...parameters },
+			{ statusCode: 200, body: [] },
+		);
+
+		expect(items).toEqual([{ deleted: true }]);
+	});
+
 	it('leaves PDF payloads alone, because they have no envelope', async () => {
 		const body = { file: 'https://files.test/a.pdf', pages: 12, size: 165310 };
 		const items = await postReceiveFor(

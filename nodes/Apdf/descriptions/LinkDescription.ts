@@ -1,7 +1,7 @@
 import type { INodeProperties } from 'n8n-workflow';
 import { showFor } from '../../shared/display';
 import { documentPicker } from '../../shared/fields';
-import { rawOutput, resourceOutput } from '../../shared/output';
+import { deleteOutput, resourceOutput } from '../../shared/output';
 import { listOptions } from '../../shared/pagination';
 
 /** Operations that address one existing link through its token in the path. */
@@ -32,7 +32,7 @@ export const linkOperations: INodeProperties[] = [
 				name: 'Create',
 				value: 'create',
 				action: 'Create tracking link',
-				description: 'Mint a link for one recipient so their reading is attributed to them',
+				description: 'Create a new tracking link for one recipient, so their reading is attributed to them',
 				routing: {
 					request: { method: 'POST', url: '=/docs/{{$parameter.docId}}/links' },
 					output: resourceOutput,
@@ -42,7 +42,7 @@ export const linkOperations: INodeProperties[] = [
 				name: 'Deactivate',
 				value: 'deactivate',
 				action: 'Deactivate tracking link',
-				description: 'Stop the recipient opening the document without deleting the link',
+				description: 'Stop the recipient from opening the document without deleting the tracking link',
 				routing: {
 					request: {
 						method: 'POST',
@@ -55,20 +55,20 @@ export const linkOperations: INodeProperties[] = [
 				name: 'Delete',
 				value: 'delete',
 				action: 'Delete tracking link',
-				description: 'Permanently remove the link and its attribution',
+				description: 'Delete a tracking link permanently',
 				routing: {
 					request: {
 						method: 'DELETE',
 						url: '=/docs/{{$parameter.docId}}/links/{{$parameter.token}}',
 					},
-					output: rawOutput,
+					output: deleteOutput,
 				},
 			},
 			{
 				name: 'Get Many',
 				value: 'getAll',
 				action: 'Get many tracking links',
-				description: 'List the links minted for a document',
+				description: 'Retrieve a list of the tracking links of a document',
 				routing: {
 					request: { method: 'GET', url: '=/docs/{{$parameter.docId}}/links' },
 					output: resourceOutput,
@@ -89,7 +89,7 @@ export const linkFields: INodeProperties[] = [
 		default: '',
 		required: true,
 		displayOptions: showFor('link', operationsNeedingToken),
-		description: 'The token identifying the tracking link, as returned by Get Many',
+		description: "The token identifying the tracking link, as returned by 'Get Many'",
 	},
 	{
 		displayName: 'Recipient Name',
@@ -105,10 +105,10 @@ export const linkFields: INodeProperties[] = [
 		displayName: 'Recipient Email',
 		name: 'email',
 		type: 'string',
-		placeholder: 'name@email.com',
+		placeholder: 'e.g. nathan@example.com',
 		default: '',
 		displayOptions: showFor('link', ['create']),
-		description: 'Optional email address recorded alongside the recipient name',
+		description: 'Recorded alongside the recipient name',
 		routing: { send: { type: 'body', property: 'email' } },
 	},
 	...listOptions(showFor('link', ['getAll'])),

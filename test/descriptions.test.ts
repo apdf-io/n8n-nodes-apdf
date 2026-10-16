@@ -44,6 +44,41 @@ describe('Apdf node', () => {
 		}
 	});
 
+	it('words operations the way n8n does', () => {
+		const vocabulary: Record<string, RegExp> = {
+			getAll: /^Retrieve a list of /,
+			create: /^Create a new /,
+			delete: /^Delete (a|an) .+ permanently/,
+		};
+
+		// PDF operations transform files rather than manage records, so the vocabulary does not apply.
+		for (const property of operationProperties.filter((p) => resourceOf(p) !== 'pdf')) {
+			for (const operation of operationsOf(property)) {
+				const expected = vocabulary[String(operation.value)];
+				const where = `${resourceOf(property)}.${String(operation.value)}`;
+
+				if (expected) {
+					expect(operation.description, where).toMatch(expected);
+				}
+
+				if (operation.value === 'get') {
+					expect(operation.description, where).toMatch(/^Retrieve /);
+				}
+			}
+		}
+	});
+
+	it('starts every placeholder with "e.g." unless it labels an add button', () => {
+		const placeholders =
+			JSON.stringify([...properties, ...new ApdfTrigger().description.properties]).match(
+				/"placeholder":"[^"]*"/g,
+			) ?? [];
+
+		for (const placeholder of placeholders) {
+			expect(placeholder).toMatch(/"placeholder":"(e\.g\. |Add )/);
+		}
+	});
+
 	it('keeps operation values unique within each resource', () => {
 		for (const property of operationProperties) {
 			const values = operationsOf(property).map((operation) => operation.value);
@@ -155,6 +190,20 @@ describe('Apdf Trigger node', () => {
 		expect(typeof hooks?.checkExists).toBe('function');
 		expect(typeof hooks?.create).toBe('function');
 		expect(typeof hooks?.delete).toBe('function');
+	});
+
+	it('says what is missing and how to fix it when no event is selected', async () => {
+		const context = {
+			getNode: () => ({ name: 'Apdf Trigger' }),
+			getNodeParameter: () => [],
+		};
+
+		await expect(
+			trigger.webhookMethods!.default.create.call(context as never),
+		).rejects.toMatchObject({
+			message: 'No event selected',
+			description: "Choose at least one event in 'Events', then activate the workflow again.",
+		});
 	});
 
 	it('requires credentials, because the hooks register the automation over the API', () => {

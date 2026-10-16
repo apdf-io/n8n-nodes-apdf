@@ -1,7 +1,7 @@
 import type { INodeProperties } from 'n8n-workflow';
 import { showFor } from '../../shared/display';
 import { documentPicker } from '../../shared/fields';
-import { rawOutput, resourceOutput } from '../../shared/output';
+import { deleteOutput, resourceOutput } from '../../shared/output';
 import { listOptions } from '../../shared/pagination';
 
 /** Operations that address one existing document through its ID in the path. */
@@ -36,7 +36,7 @@ export const documentOperations: INodeProperties[] = [
 				name: 'Create',
 				value: 'create',
 				action: 'Create document',
-				description: 'Upload a PDF from a URL so it can be shared and tracked',
+				description: 'Create a new document from a PDF URL, ready to share through tracking links',
 				routing: {
 					request: { method: 'POST', url: '/docs' },
 					output: resourceOutput,
@@ -46,17 +46,18 @@ export const documentOperations: INodeProperties[] = [
 				name: 'Delete',
 				value: 'delete',
 				action: 'Delete document',
-				description: 'Permanently delete a document and its underlying PDF file',
+				description:
+					'Delete a document permanently, with its PDF file, tracking links, annotations and form submissions',
 				routing: {
 					request: { method: 'DELETE', url: '=/docs/{{$parameter.docId}}' },
-					output: rawOutput,
+					output: deleteOutput,
 				},
 			},
 			{
 				name: 'Get',
 				value: 'get',
 				action: 'Get document',
-				description: 'Get a single document by its public ID',
+				description: 'Retrieve a document',
 				routing: {
 					request: { method: 'GET', url: '=/docs/{{$parameter.docId}}' },
 					output: resourceOutput,
@@ -66,7 +67,7 @@ export const documentOperations: INodeProperties[] = [
 				name: 'Get Many',
 				value: 'getAll',
 				action: 'Get many documents',
-				description: 'List the documents in the workspace',
+				description: 'Retrieve a list of documents',
 				routing: {
 					request: { method: 'GET', url: '/docs' },
 					output: resourceOutput,
@@ -76,7 +77,7 @@ export const documentOperations: INodeProperties[] = [
 				name: 'Make Private',
 				value: 'makePrivate',
 				action: 'Make document private',
-				description: 'Require a tracking link to view the document',
+				description: 'Require a tracking link to open the document',
 				routing: {
 					request: { method: 'POST', url: '=/docs/{{$parameter.docId}}/private' },
 					output: resourceOutput,

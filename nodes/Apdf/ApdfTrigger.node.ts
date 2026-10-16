@@ -94,7 +94,7 @@ export class ApdfTrigger implements INodeType {
 		group: ['trigger'],
 		version: 1,
 		subtitle: '={{$parameter["events"].join(", ")}}',
-		description: 'Start a workflow when someone reads a PDF you shared with Apdf',
+		description: 'Start a workflow when a reader interacts with a document you shared with Apdf',
 		defaults: {
 			name: 'Apdf Trigger',
 		},
@@ -129,7 +129,7 @@ export class ApdfTrigger implements INodeType {
 				name: 'docIds',
 				type: 'string',
 				default: '',
-				placeholder: '48927-c7621-ec3c0',
+				placeholder: 'e.g. 48927-c7621-ec3c0',
 				description:
 					'Comma-separated document IDs to watch. Leave empty to watch every document in the workspace.',
 			},
@@ -207,10 +207,9 @@ export class ApdfTrigger implements INodeType {
 				const events = this.getNodeParameter('events', []) as string[];
 
 				if (events.length === 0) {
-					throw new NodeOperationError(
-						this.getNode(),
-						'Select at least one event before activating the workflow.',
-					);
+					throw new NodeOperationError(this.getNode(), 'No event selected', {
+						description: "Choose at least one event in 'Events', then activate the workflow again.",
+					});
 				}
 
 				const webhookUrl = this.getNodeWebhookUrl('default');
@@ -223,7 +222,8 @@ export class ApdfTrigger implements INodeType {
 				if (automationId === undefined) {
 					throw new NodeOperationError(
 						this.getNode(),
-						'Apdf did not return an automation ID, so the trigger cannot be tracked.',
+						'Apdf did not return an automation ID, so the trigger cannot be tracked',
+						{ description: 'Deactivate the workflow and activate it again.' },
 					);
 				}
 
