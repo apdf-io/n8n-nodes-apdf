@@ -196,6 +196,17 @@ const cases: Array<{
 	},
 	{ resource: 'pdf', operation: 'ocrRead', parameters: { file: 'https://e.test/a.pdf' }, method: 'POST', url: '/pdf/ocr/read' },
 
+	// PDF — forms
+	{ resource: 'pdf', operation: 'readForm', parameters: { file: 'https://e.test/a.pdf' }, method: 'POST', url: '/pdf/form/read' },
+	{
+		resource: 'pdf',
+		operation: 'fillForm',
+		parameters: { file: 'https://e.test/a.pdf', fieldsUi: { field: [{ name: 'full_name', value: 'Jane Doe' }] } },
+		method: 'POST',
+		url: '/pdf/form/fill',
+	},
+	{ resource: 'pdf', operation: 'visualizeForm', parameters: { file: 'https://e.test/a.pdf' }, method: 'POST', url: '/pdf/form/visualize' },
+
 	// PDF — security and metadata
 	{
 		resource: 'pdf',

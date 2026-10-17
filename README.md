@@ -5,7 +5,7 @@ An n8n node for [Apdf](https://apdf.io) — the PDF engagement layer for apps an
 Share a PDF as a per-recipient tracking link, then find out who opened it, which pages they
 actually read, how long they stayed and what they typed into its forms. The same node also
 covers the full Apdf PDF toolset: create, convert from Office, merge, split, compress, OCR,
-encrypt and page operations.
+encrypt, read and fill forms, and page operations.
 
 [n8n](https://n8n.io) is a [fair-code licensed](https://docs.n8n.io/reference/license/)
 workflow automation platform.
@@ -209,17 +209,30 @@ A **Recipient Name** is required; **Recipient Email** is optional.
 
 ### PDF
 
-Nineteen operations over the Apdf PDF API: **Create From HTML**, **Convert From Office**,
+The operations of the Apdf PDF API: **Create From HTML**, **Convert From Office**,
 **Merge**, **Split**, **Compress**, **Convert to Image**, **Extract Pages**, **Delete
 Pages**, **Rotate Pages**, **Overlay Pages**, **Underlay Pages**, **Search Content**,
-**Read Content**, **OCR Convert**, **OCR Search Content**, **OCR Read Content**, **Add
-Security**, **Remove Security** and **Read Metadata**.
+**Read Content**, **OCR Convert**, **OCR Search Content**, **OCR Read Content**, **Read
+Form**, **Fill Form**, **Visualize Form**, **Add Security**, **Remove Security** and **Read
+Metadata**.
 
-Every operation takes its source as a publicly reachable URL and returns a new file. None of
-them modify the source, including **Delete Pages**.
+Every operation takes its source as a publicly reachable URL. Operations that change a PDF
+return a new file and never modify the source, including **Delete Pages**.
 
 **Convert From Office** takes a Word, Excel, PowerPoint, OpenDocument or RTF file (docx, doc,
 xlsx, xls, pptx, ppt, odt, ods, odp, rtf) instead of a PDF.
+
+The form operations work together:
+
+- **Read Form** returns every form field with its name, type, value and options, along with
+  its label and the text printed around it on the page.
+- **Fill Form** takes the fields to fill by those names. A checkbox takes `true` or `false`;
+  radio buttons, dropdowns and list boxes take the option to select. Fields you leave out keep
+  their value, and calculated fields such as totals are updated. Enable **Flatten** under
+  **Options** so the filled fields can no longer be changed.
+- **Visualize Form** renders the form pages as images with a numbered box on every field, and
+  lists which field each number is. Hand the images to an AI step, so it can tell which field
+  to fill even when the names say nothing, like `Text12`.
 
 ### Automation
 

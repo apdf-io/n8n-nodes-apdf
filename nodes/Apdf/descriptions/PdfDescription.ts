@@ -16,11 +16,13 @@ const singleFileOperations = [
 	'compress',
 	'deletePages',
 	'extractPages',
+	'fillForm',
 	'ocrConvert',
 	'ocrRead',
 	'ocrSearch',
 	'overlay',
 	'read',
+	'readForm',
 	'readMetadata',
 	'removeSecurity',
 	'rotate',
@@ -28,6 +30,7 @@ const singleFileOperations = [
 	'split',
 	'toImage',
 	'underlay',
+	'visualizeForm',
 ];
 
 /** Operations the API always runs on a queue, so they return a job ID instead of a result. */
@@ -46,15 +49,18 @@ const optionalAsyncOperations = [
 	'addSecurity',
 	'deletePages',
 	'extractPages',
+	'fillForm',
 	'merge',
 	'overlay',
 	'read',
+	'readForm',
 	'readMetadata',
 	'removeSecurity',
 	'rotate',
 	'search',
 	'split',
 	'underlay',
+	'visualizeForm',
 ];
 
 /**
@@ -166,6 +172,16 @@ export const pdfOperations: INodeProperties[] = [
 				},
 			},
 			{
+				name: 'Fill Form',
+				value: 'fillForm',
+				action: 'Fill PDF form',
+				description: 'Fill the form fields of a PDF by name and return the filled PDF',
+				routing: {
+					request: { method: 'POST', url: '/pdf/form/fill' },
+					output: rawOutput,
+				},
+			},
+			{
 				name: 'Merge',
 				value: 'merge',
 				action: 'Merge PDF files',
@@ -226,6 +242,16 @@ export const pdfOperations: INodeProperties[] = [
 				},
 			},
 			{
+				name: 'Read Form',
+				value: 'readForm',
+				action: 'Read PDF form',
+				description: 'Get the form fields of a PDF with their values, options and labels',
+				routing: {
+					request: { method: 'POST', url: '/pdf/form/read' },
+					output: rawOutput,
+				},
+			},
+			{
 				name: 'Read Metadata',
 				value: 'readMetadata',
 				action: 'Read PDF metadata',
@@ -282,6 +308,17 @@ export const pdfOperations: INodeProperties[] = [
 				description: 'Place another PDF behind the pages, for a background or template',
 				routing: {
 					request: { method: 'POST', url: '/pdf/page/underlay' },
+					output: rawOutput,
+				},
+			},
+			{
+				name: 'Visualize Form',
+				value: 'visualizeForm',
+				action: 'Visualize PDF form',
+				description:
+					'Render the form pages as images with a numbered box on every field, for AI agents to see the form',
+				routing: {
+					request: { method: 'POST', url: '/pdf/form/visualize' },
 					output: rawOutput,
 				},
 			},
@@ -407,6 +444,45 @@ export const pdfFields: INodeProperties[] = [
 				property: 'rotations',
 				value: '={{ $parameter.rotationsUi.rotation }}',
 			},
+		},
+	},
+	{
+		displayName: 'Fields',
+		name: 'fieldsUi',
+		type: 'fixedCollection',
+		typeOptions: { multipleValues: true },
+		default: {},
+		required: true,
+		placeholder: 'Add field',
+		displayOptions: showFor('pdf', ['fillForm']),
+		description:
+			"The form fields to fill, named as 'Read Form' returns them. Fields not listed keep their value.",
+		options: [
+			{
+				displayName: 'Field',
+				name: 'field',
+				values: [
+					{
+						displayName: 'Name',
+						name: 'name',
+						type: 'string',
+						default: '',
+						required: true,
+						description: 'The name of the form field',
+					},
+					{
+						displayName: 'Value',
+						name: 'value',
+						type: 'string',
+						default: '',
+						description:
+							'Text for a text field (empty clears it), true or false for a checkbox, or the option to select for radio buttons, dropdowns and list boxes',
+					},
+				],
+			},
+		],
+		routing: {
+			send: { type: 'body', property: 'fields', value: '={{ $parameter.fieldsUi.field }}' },
 		},
 	},
 	{
@@ -732,6 +808,48 @@ export const pdfFields: INodeProperties[] = [
 	optionsCollection(
 		[
 			{
+				displayName: 'Flatten',
+				name: 'flatten',
+				type: 'boolean',
+				default: false,
+				description: 'Whether to merge the filled fields into the pages, so they can no longer be changed',
+				routing: { send: { type: 'body', property: 'flatten' } },
+			},
+			asyncOption(),
+			webhookUrlOption(),
+				],
+		showFor('pdf', ['fillForm']),
+	),
+
+	optionsCollection(
+		[
+			{
+				displayName: 'DPI',
+				name: 'dpi',
+				type: 'number',
+				default: 100,
+				typeOptions: { minValue: 50, maxValue: 200 },
+				description: 'Image resolution, between 50 and 200',
+				routing: { send: { type: 'body', property: 'dpi' } },
+			},
+			{
+				displayName: 'Pages',
+				name: 'pages',
+				type: 'string',
+				default: '',
+				description:
+					'Which pages to render. Leave empty for every page with a field to fill. Page numbers and ranges, for example 1,3-5. Use z for the last page and rN for the Nth page from the end.',
+				routing: { send: { type: 'body', property: 'pages' } },
+			},
+			asyncOption(),
+			webhookUrlOption(),
+				],
+		showFor('pdf', ['visualizeForm']),
+	),
+
+	optionsCollection(
+		[
+			{
 				displayName: 'Password',
 				name: 'password',
 				type: 'string',
@@ -757,6 +875,7 @@ export const pdfFields: INodeProperties[] = [
 			'extractPages',
 			'merge',
 			'read',
+			'readForm',
 			'readMetadata',
 			'rotate',
 			'split',

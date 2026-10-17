@@ -28,6 +28,7 @@
 		"PDF",
 		"OCR",
 		"merge",
+		"form",
 		"watermark",
 		"viewer"
 	]

@@ -153,6 +153,43 @@ describe('the request the node sends', () => {
 		expect((options.body as IDataObject).rotations).toEqual([{ angle: '90', pages: '1' }]);
 	});
 
+	it('sends the form fields to fill as an array of name and value', () => {
+		const { options } = build({
+			resource: 'pdf',
+			operation: 'fillForm',
+			file: 'https://example.com/form.pdf',
+			fieldsUi: {
+				field: [
+					{ name: 'full_name', value: 'Jane Doe' },
+					{ name: 'newsletter', value: 'true' },
+				],
+			},
+			options: { flatten: true },
+		});
+
+		expect(options.url).toBe('/pdf/form/fill');
+		expect(options.body).toEqual({
+			file: 'https://example.com/form.pdf',
+			fields: [
+				{ name: 'full_name', value: 'Jane Doe' },
+				{ name: 'newsletter', value: 'true' },
+			],
+			flatten: true,
+		});
+	});
+
+	it('sends the pages and resolution to visualize a form', () => {
+		const { options } = build({
+			resource: 'pdf',
+			operation: 'visualizeForm',
+			file: 'https://example.com/form.pdf',
+			options: { pages: '1-2', dpi: 150 },
+		});
+
+		expect(options.url).toBe('/pdf/form/visualize');
+		expect(options.body).toEqual({ file: 'https://example.com/form.pdf', pages: '1-2', dpi: 150 });
+	});
+
 	it('nests the session ID in the analytics path', () => {
 		const { options } = build({
 			resource: 'analytics',
