@@ -40,12 +40,13 @@ export function describeError(status: number, body: IDataObject): ErrorDetails {
 		};
 	}
 
-	// Laravel validation failures name the offending fields, which is the useful part.
-	if (status === 422 && body.errors !== undefined) {
+	// Rejected requests name the offending fields, which is the useful part. Laravel validation
+	// lists the messages of a field; errors raised while a PDF operation runs give a single string.
+	if (status === 422 && body.errors !== undefined && body.errors !== null && typeof body.errors === 'object') {
 		return {
 			message: String(body.message ?? 'The request was rejected'),
-			description: Object.entries(body.errors as Record<string, string[]>)
-				.map(([field, messages]) => `${field}: ${messages.join(' ')}`)
+			description: Object.entries(body.errors as Record<string, string | string[]>)
+				.map(([field, messages]) => `${field}: ${([] as string[]).concat(messages).join(' ')}`)
 				.join('; '),
 		};
 	}

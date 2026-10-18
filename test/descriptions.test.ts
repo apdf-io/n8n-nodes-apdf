@@ -254,6 +254,21 @@ describe('error messages', () => {
 		expect(details.description).toBe('pages: Invalid pages syntax; file: The file must be a URL');
 	});
 
+	it('names the fields when an operation rejects them with a single message each', () => {
+		const details = describeError(422, {
+			message: 'The form could not be filled.',
+			errors: {
+				'fields.0.name': 'The field "signature" cannot be filled',
+				'fields.1.value': 'The field "sex" expects one of the options: M, F',
+			},
+		});
+
+		expect(details.message).toBe('The form could not be filled.');
+		expect(details.description).toBe(
+			'fields.0.name: The field "signature" cannot be filled; fields.1.value: The field "sex" expects one of the options: M, F',
+		);
+	});
+
 	it('falls back to the status when the body says nothing useful', () => {
 		expect(describeError(500, {}).message).toBe('Apdf returned status 500');
 	});
