@@ -16,6 +16,20 @@ export const analyticsOperations: INodeProperties[] = [
 		displayOptions: showFor('analytics'),
 		options: [
 			{
+				name: 'Add Annotation Comment',
+				value: 'addAnnotationComment',
+				action: 'Add a comment to an annotation',
+				description:
+					'Add a comment to an annotation, shown to readers in the document: the opening comment if it has none yet, otherwise a reply',
+				routing: {
+					request: {
+						method: 'POST',
+						url: '=/docs/{{$parameter.docId}}/annotations/{{$parameter.annotationId}}/comments',
+					},
+					output: resourceOutput,
+				},
+			},
+			{
 				name: 'Get Annotations',
 				value: 'getAnnotations',
 				action: 'Get document annotations',
@@ -84,6 +98,36 @@ export const analyticsFields: INodeProperties[] = [
 		required: true,
 		displayOptions: showFor('analytics', ['getSession']),
 		description: "The ID of the reading session, as returned by 'Get Sessions'",
+	},
+	{
+		displayName: 'Annotation ID',
+		name: 'annotationId',
+		type: 'string',
+		default: '',
+		required: true,
+		displayOptions: showFor('analytics', ['addAnnotationComment']),
+		description: "The ID of the annotation, as returned by 'Get Annotations' or an annotation trigger",
+	},
+	{
+		displayName: 'Author',
+		name: 'author',
+		type: 'string',
+		default: '',
+		required: true,
+		displayOptions: showFor('analytics', ['addAnnotationComment']),
+		description: 'Shown as the comment author in the document',
+		routing: { send: { type: 'body', property: 'author' } },
+	},
+	{
+		displayName: 'Comment',
+		name: 'text',
+		type: 'string',
+		typeOptions: { rows: 4 },
+		default: '',
+		required: true,
+		displayOptions: showFor('analytics', ['addAnnotationComment']),
+		description: "Readers see it in the annotation's thread. It doesn't fire reader events.",
+		routing: { send: { type: 'body', property: 'text' } },
 	},
 	...listOptions(showFor('analytics', paginatedOperations)),
 ];

@@ -18,7 +18,7 @@ export const triggerEvents: INodePropertyOptions[] = [
 	{
 		name: 'Annotation Updated',
 		value: 'annotation:update',
-		description: 'A reader modified an annotation',
+		description: 'A reader modified an annotation or replied to its comment',
 	},
 	{
 		name: 'Document Downloaded',

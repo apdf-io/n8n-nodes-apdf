@@ -201,6 +201,21 @@ describe('the request the node sends', () => {
 		expect(options.url).toBe('/docs/doc-1/analytics/sessions/sess-9');
 	});
 
+	it('nests the annotation ID in the path and sends the comment as a body', () => {
+		const { options } = build({
+			resource: 'analytics',
+			operation: 'addAnnotationComment',
+			docId: 'doc-1',
+			annotationId: 'annot-7',
+			author: 'Sam Lee',
+			text: 'Yes, from 25 seats.',
+		});
+
+		expect(options.method).toBe('POST');
+		expect(options.url).toBe('/docs/doc-1/annotations/annot-7/comments');
+		expect(options.body).toEqual({ author: 'Sam Lee', text: 'Yes, from 25 seats.' });
+	});
+
 	it('sends the job ID in the body, since status check is a POST', () => {
 		const { options } = build({ resource: 'job', operation: 'checkStatus', id: 'job-7' });
 

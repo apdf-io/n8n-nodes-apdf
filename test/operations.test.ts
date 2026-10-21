@@ -82,6 +82,13 @@ const cases: Array<{
 	},
 	{
 		resource: 'analytics',
+		operation: 'addAnnotationComment',
+		parameters: { docId: 'D1', annotationId: 'A7', author: 'Sam Lee', text: 'Yes' },
+		method: 'POST',
+		url: '/docs/D1/annotations/A7/comments',
+	},
+	{
+		resource: 'analytics',
 		operation: 'getAnnotations',
 		parameters: { docId: 'D1' },
 		method: 'GET',
