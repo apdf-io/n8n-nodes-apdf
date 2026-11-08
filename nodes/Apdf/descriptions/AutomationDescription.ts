@@ -33,7 +33,7 @@ export const automationOperations: INodeProperties[] = [
 				name: 'Create',
 				value: 'create',
 				action: 'Create automation',
-				description: 'Create a new automation that calls a webhook when readers act on your documents',
+				description: 'Create a new automation that calls a webhook when someone reads or signs your documents',
 				routing: {
 					request: { method: 'POST', url: '/automations' },
 					output: resourceOutput,

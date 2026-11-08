@@ -145,7 +145,7 @@ export const pdfOperations: INodeProperties[] = [
 				name: 'Create From HTML',
 				value: 'create',
 				action: 'Create PDF from HTML',
-				description: 'Render HTML into a PDF. Always runs asynchronously.',
+				description: 'Generate a PDF from HTML, such as an invoice or report. Always runs asynchronously.',
 				routing: {
 					request: { method: 'POST', url: '/pdf/file/create' },
 					output: rawOutput,
@@ -175,7 +175,7 @@ export const pdfOperations: INodeProperties[] = [
 				name: 'Fill Form',
 				value: 'fillForm',
 				action: 'Fill PDF form',
-				description: 'Fill the form fields of a PDF by name and return the filled PDF',
+				description: 'Generate a filled PDF from a PDF form, filling its fields by name',
 				routing: {
 					request: { method: 'POST', url: '/pdf/form/fill' },
 					output: rawOutput,

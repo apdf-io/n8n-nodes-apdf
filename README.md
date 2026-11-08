@@ -1,11 +1,12 @@
 # @apdf/n8n-nodes-apdf
 
-An n8n node for [Apdf](https://apdf.io) — the PDF engagement layer for apps and agents.
+An n8n node for [Apdf](https://apdf.io) — the PDF API to generate, track and sign documents.
 
-Share a PDF as a per-recipient tracking link, then find out who opened it, which pages they
-actually read, how long they stayed and what they typed into its forms. The same node also
-covers the full Apdf PDF toolset: create, convert from Office, merge, split, compress, OCR,
-encrypt, read and fill forms, and page operations.
+Create a PDF, share it as a per-recipient tracking link, then find out who opened it, which
+pages they actually read, how long they stayed and what they typed into its forms. Ask each
+party to sign their part, and get the signed PDF with its audit trail once everyone has. The
+same node also covers the full Apdf PDF toolset: create, convert from Office, merge, split,
+compress, OCR, encrypt, read and fill forms, and page operations.
 
 [n8n](https://n8n.io) is a [fair-code licensed](https://docs.n8n.io/reference/license/)
 workflow automation platform.
@@ -46,12 +47,12 @@ This package ships two nodes:
 
 | Node             | Purpose                                                              |
 | ---------------- | -------------------------------------------------------------------- |
-| **Apdf Trigger** | Starts a workflow when a reader interacts with a document you shared |
-| **Apdf**         | Reads engagement data and runs PDF operations                        |
+| **Apdf Trigger** | Starts a workflow when someone reads or signs a document you shared  |
+| **Apdf**         | Generates PDFs, requests signatures and reads engagement data        |
 
 ## Apdf Trigger
 
-The trigger receives the webhook that an Apdf automation sends when a reader does something.
+The trigger receives the webhook that an Apdf automation sends when someone reads or signs a document.
 
 Automations, and so this trigger, need a **Pro** or **Business** plan. On the free Hobby plan
 Apdf refuses to create the automation, so activating the workflow fails with an error. The
@@ -266,7 +267,7 @@ Like the trigger, this needs a Pro or Business plan. **Create**, **Activate** an
 **Duplicate** fail with an error on the Hobby plan or once the plan's limit of active
 automations is reached.
 
-If you only want a workflow to react to readers, use the **Apdf Trigger** instead — it creates
+If you only want a workflow to react to readers or signers, use the **Apdf Trigger** instead — it creates
 and removes its own automation. Use this resource when you are managing automations
 programmatically, for instance pointing them at systems outside n8n.
 

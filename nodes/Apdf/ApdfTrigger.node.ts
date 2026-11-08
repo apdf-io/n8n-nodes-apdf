@@ -94,7 +94,7 @@ export class ApdfTrigger implements INodeType {
 		group: ['trigger'],
 		version: 1,
 		subtitle: '={{$parameter["events"].join(", ")}}',
-		description: 'Start a workflow when a reader interacts with a document you shared with Apdf',
+		description: 'Start a workflow when someone reads or signs a document you shared with Apdf',
 		defaults: {
 			name: 'Apdf Trigger',
 		},

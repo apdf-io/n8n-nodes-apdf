@@ -1,7 +1,7 @@
 {
 	"name": "@apdf/n8n-nodes-apdf",
 	"version": "1.2.1",
-	"description": "n8n node for Apdf — PDF tracking links, reader analytics and PDF processing",
+	"description": "n8n node for Apdf — the PDF API to generate, track and sign documents",
 	"license": "MIT",
 	"homepage": "https://apdf.io",
 	"keywords": [
@@ -9,7 +9,11 @@
 		"apdf",
 		"pdf",
 		"document-tracking",
-		"reader-analytics"
+		"reader-analytics",
+		"e-signature",
+		"pdf-generation",
+		"html-to-pdf",
+		"pdf-api"
 	],
 	"author": {
 		"name": "Apdf",

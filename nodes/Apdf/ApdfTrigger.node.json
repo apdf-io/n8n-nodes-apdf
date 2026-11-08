@@ -29,6 +29,8 @@
 		"OCR",
 		"merge",
 		"watermark",
-		"viewer"
+		"viewer",
+		"signature",
+		"e-signature"
 	]
 }

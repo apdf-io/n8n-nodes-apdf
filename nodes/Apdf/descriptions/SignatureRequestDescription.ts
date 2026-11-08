@@ -26,7 +26,7 @@ export const signatureRequestOperations: INodeProperties[] = [
 				value: 'create',
 				action: 'Create signature request',
 				description:
-					'Create a new signature request, asking each signer to sign their own part of the document',
+					'Create a new e-signature request, asking each signer to sign their own part of the document',
 				routing: {
 					request: { method: 'POST', url: '=/docs/{{$parameter.docId}}/signature-request' },
 					output: resourceOutput,

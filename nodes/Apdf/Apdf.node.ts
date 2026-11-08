@@ -34,7 +34,7 @@ export class Apdf implements INodeType {
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
-		description: 'Track shared PDFs, request signatures, read engagement analytics and process PDF files',
+		description: 'Generate, track and sign PDFs: create and process files, share tracking links and request signatures',
 		defaults: {
 			name: 'Apdf',
 		},

@@ -30,6 +30,8 @@
 		"merge",
 		"form",
 		"watermark",
-		"viewer"
+		"viewer",
+		"signature",
+		"e-signature"
 	]
 }
