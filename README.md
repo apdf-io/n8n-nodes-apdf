@@ -98,11 +98,15 @@ selected.
 | Annotation Created   | A reader creates an annotation                      |
 | Annotation Updated   | A reader modifies an annotation                     |
 | Annotation Deleted   | A reader removes an annotation                      |
+| Document Signed      | A signer signs their part, or the company approves  |
+| Signature Declined   | A signer declines, which ends the request           |
+| Signing Completed    | Everyone signed and the signed PDF is ready         |
 
 Document and page events — opened, downloaded, printed, viewed, read and left — trigger an
 automation **once per reading session**, even where the underlying measurement repeats. Page
 Read is measured every 15 seconds, but your workflow runs once for that session. Text Copied,
-Link Clicked, Form Submitted and the annotation events fire every time they happen.
+Link Clicked, Form Submitted, the annotation events and the signature events fire every time
+they happen.
 
 ### Output
 
@@ -143,6 +147,9 @@ The trigger emits the automation payload unchanged:
 | Form Submitted                         | `fields`                                                            |
 | Annotation Created, Annotation Updated | `page`, `type`, `comment_text`, `comment_author`, `annotated_text`  |
 | Annotation Deleted                     | `page`                                                              |
+| Document Signed                        | `request_id`, `role`, `name`, `email`, `signed_at`, `metadata`      |
+| Signature Declined                     | `request_id`, `role`, `name`, `email`, `declined_at`, `decline_reason`, `metadata` |
+| Signing Completed                      | `request_id`, `completed_at`, `signers`, `file_url`, `metadata`     |
 | Document Opened, Downloaded, Printed   | `null`                                                              |
 
 ### Example
@@ -196,6 +203,17 @@ Create one link per recipient so that reading activity is attributed to a person
 anonymous reader. Create, list, delete, activate and deactivate links.
 
 A **Recipient Name** is required; **Recipient Email** is optional.
+
+### Signature Request
+
+Ask people to sign a document, each their own part: a recipient by name and email, who signs
+in their tracking link with a code sent to their email; a member of your workspace, who signs
+after logging in; or your company, which approves its part automatically once everyone else
+has signed. **Create** takes the signers and, optionally, where their fields go: at an anchor
+text, on a signature box of the PDF, or at coordinates. Without fields, the ones placed in the
+dashboard are used. **Get** returns the latest request with each signer's status and, once
+completed, the link to the signed PDF (valid for 7 days). **Cancel** withdraws a pending
+request.
 
 ### Analytics
 

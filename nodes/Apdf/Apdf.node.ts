@@ -20,6 +20,8 @@ import {
 	linkOperations,
 	pdfFields,
 	pdfOperations,
+	signatureRequestFields,
+	signatureRequestOperations,
 } from './descriptions';
 import { APDF_CREDENTIALS } from '../../credentials/ApdfApi.credentials';
 import { apdfApiRequest } from '../shared/transport';
@@ -32,7 +34,7 @@ export class Apdf implements INodeType {
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
-		description: 'Track shared PDFs, read engagement analytics and process PDF files',
+		description: 'Track shared PDFs, request signatures, read engagement analytics and process PDF files',
 		defaults: {
 			name: 'Apdf',
 		},
@@ -80,6 +82,10 @@ export class Apdf implements INodeType {
 						value: 'pdf',
 					},
 					{
+						name: 'Signature Request',
+						value: 'signatureRequest',
+					},
+					{
 						name: 'Tracking Link',
 						value: 'link',
 					},
@@ -98,6 +104,8 @@ export class Apdf implements INodeType {
 			...linkFields,
 			...pdfOperations,
 			...pdfFields,
+			...signatureRequestOperations,
+			...signatureRequestFields,
 		],
 	};
 

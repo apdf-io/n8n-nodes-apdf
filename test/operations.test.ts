@@ -64,6 +64,23 @@ const cases: Array<{
 		url: '/docs/D1/links/T9/deactivate',
 	},
 
+	// Signature request
+	{
+		resource: 'signatureRequest',
+		operation: 'create',
+		parameters: { docId: 'D1', signersUi: { signer: [{ role: 'Client', name: 'Jane', email: 'jane@e.test' }] } },
+		method: 'POST',
+		url: '/docs/D1/signature-request',
+	},
+	{ resource: 'signatureRequest', operation: 'get', parameters: { docId: 'D1' }, method: 'GET', url: '/docs/D1/signature-request' },
+	{
+		resource: 'signatureRequest',
+		operation: 'cancel',
+		parameters: { docId: 'D1' },
+		method: 'POST',
+		url: '/docs/D1/signature-request/cancel',
+	},
+
 	// Analytics
 	{ resource: 'analytics', operation: 'get', parameters: { docId: 'D1' }, method: 'GET', url: '/docs/D1/analytics' },
 	{

@@ -216,6 +216,67 @@ describe('the request the node sends', () => {
 		expect(options.body).toEqual({ author: 'Sam Lee', text: 'Yes, from 25 seats.' });
 	});
 
+	it('sends recipients, members and the company approval as the signers of a signature request', () => {
+		const { options } = build({
+			resource: 'signatureRequest',
+			operation: 'create',
+			docId: 'doc-1',
+			signersUi: {
+				signer: [
+					{ role: 'Client', name: 'Jane Doe', email: 'jane@contoso.com', member: '', company: false },
+					{ role: 'Agency', name: '', email: '', member: 'sam@acme.com', company: false },
+					{ role: 'Approval', name: '', email: '', member: '', company: true },
+				],
+			},
+			sendEmail: false,
+			options: { message: 'Here is the contract.', metadata: '{"deal_id":"D-42"}' },
+		});
+
+		expect(options.method).toBe('POST');
+		expect(options.url).toBe('/docs/doc-1/signature-request');
+		expect(options.body).toEqual({
+			signers: [
+				{ role: 'Client', name: 'Jane Doe', email: 'jane@contoso.com' },
+				{ role: 'Agency', member: 'sam@acme.com' },
+				{ role: 'Approval', company: true },
+			],
+			send_email: false,
+			message: 'Here is the contract.',
+			metadata: { deal_id: 'D-42' },
+		});
+	});
+
+	it('places each signature field at an anchor, a signature box or coordinates', () => {
+		const { options } = build({
+			resource: 'signatureRequest',
+			operation: 'create',
+			docId: 'doc-1',
+			signersUi: { signer: [{ role: 'Client', name: 'Jane Doe', email: 'jane@contoso.com' }] },
+			signatureFieldsUi: {
+				field: [
+					{ role: 'Client', type: 'signature', anchor: '[client_signature]', pdf_field: '', page: 0, x: 0, y: 0 },
+					{ role: 'Client', type: 'initials', anchor: '', pdf_field: 'Initials1', page: 0, x: 0, y: 0 },
+					{ role: 'Client', type: 'date', anchor: '', pdf_field: '', page: 3, x: 72, y: 700 },
+				],
+			},
+			sendEmail: true,
+		});
+
+		expect((options.body as { fields: unknown }).fields).toEqual([
+			{ role: 'Client', type: 'signature', anchor: '[client_signature]' },
+			{ role: 'Client', type: 'initials', pdf_field: 'Initials1' },
+			{ role: 'Client', type: 'date', page: 3, x: 72, y: 700 },
+		]);
+	});
+
+	it('gets and cancels the signature request of a document', () => {
+		const get = build({ resource: 'signatureRequest', operation: 'get', docId: 'doc-1' });
+		const cancel = build({ resource: 'signatureRequest', operation: 'cancel', docId: 'doc-1' });
+
+		expect([get.options.method, get.options.url]).toEqual(['GET', '/docs/doc-1/signature-request']);
+		expect([cancel.options.method, cancel.options.url]).toEqual(['POST', '/docs/doc-1/signature-request/cancel']);
+	});
+
 	it('sends the job ID in the body, since status check is a POST', () => {
 		const { options } = build({ resource: 'job', operation: 'checkStatus', id: 'job-7' });
 

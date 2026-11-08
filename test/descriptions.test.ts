@@ -24,7 +24,7 @@ const operationsOf = (property: INodeProperties): OperationOption[] =>
 	(property.options ?? []) as OperationOption[];
 
 /** Resources whose responses are Laravel resources, so they must unwrap "data". */
-const wrappedResources = ['analytics', 'automation', 'document', 'link'];
+const wrappedResources = ['analytics', 'automation', 'document', 'link', 'signatureRequest'];
 
 const declaredNames = new Set(properties.map((property) => property.name));
 

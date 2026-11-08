@@ -28,6 +28,11 @@ export const triggerEvents: INodePropertyOptions[] = [
 	{ name: 'Document Opened', value: 'document:loaded', description: 'A reader opened the document' },
 	{ name: 'Document Printed', value: 'document:print', description: 'A reader printed the document' },
 	{
+		name: 'Document Signed',
+		value: 'signature:signed',
+		description: 'A signer signed their part of the document, or the company approved its part',
+	},
+	{
 		name: 'Form Submitted',
 		value: 'form:submit',
 		description: 'A reader submitted a form in the document',
@@ -48,6 +53,16 @@ export const triggerEvents: INodePropertyOptions[] = [
 		description: 'A reader stayed on a page, measured every 15 seconds',
 	},
 	{ name: 'Page Viewed', value: 'page:enter', description: 'A reader navigated to a page' },
+	{
+		name: 'Signature Declined',
+		value: 'signature:declined',
+		description: 'A signer declined to sign the document, which ends the signature request',
+	},
+	{
+		name: 'Signing Completed',
+		value: 'signature:completed',
+		description: 'Everyone signed the document and the signed PDF is ready',
+	},
 	{ name: 'Text Copied', value: 'text:copied', description: 'A reader copied text from the document' },
 ];
 
