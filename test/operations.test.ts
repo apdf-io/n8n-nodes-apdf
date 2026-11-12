@@ -230,6 +230,15 @@ const cases: Array<{
 		url: '/pdf/form/fill',
 	},
 	{ resource: 'pdf', operation: 'visualizeForm', parameters: { file: 'https://e.test/a.pdf' }, method: 'POST', url: '/pdf/form/visualize' },
+	{
+		resource: 'pdf',
+		operation: 'createEinvoice',
+		parameters: { file: 'https://e.test/a.pdf', invoice: '{"number": "1"}' },
+		method: 'POST',
+		url: '/pdf/einvoice/create',
+	},
+	{ resource: 'pdf', operation: 'readEinvoice', parameters: { file: 'https://e.test/a.pdf' }, method: 'POST', url: '/pdf/einvoice/read' },
+	{ resource: 'pdf', operation: 'validateEinvoice', parameters: { file: 'https://e.test/a.pdf' }, method: 'POST', url: '/pdf/einvoice/validate' },
 
 	// PDF — security and metadata
 	{

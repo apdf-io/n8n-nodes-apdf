@@ -190,6 +190,37 @@ describe('the request the node sends', () => {
 		expect(options.body).toEqual({ file: 'https://example.com/form.pdf', pages: '1-2', dpi: 150 });
 	});
 
+	it('sends the invoice data as JSON with its profile to create an e-invoice', () => {
+		const { options } = build({
+			resource: 'pdf',
+			operation: 'createEinvoice',
+			file: 'https://example.com/invoice.pdf',
+			invoice: '{"number": "RE-1", "lines": [{"name": "Consulting", "quantity": 8, "unit_price": 120, "vat_rate": 19}]}',
+			level: 'XRECHNUNG',
+			options: { webhook_url: 'https://example.com/hook' },
+		});
+
+		expect(options.url).toBe('/pdf/einvoice/create');
+		expect(options.body).toEqual({
+			file: 'https://example.com/invoice.pdf',
+			invoice: { number: 'RE-1', lines: [{ name: 'Consulting', quantity: 8, unit_price: 120, vat_rate: 19 }] },
+			level: 'XRECHNUNG',
+			webhook_url: 'https://example.com/hook',
+		});
+	});
+
+	it('sends a ready XML instead of the invoice data and profile', () => {
+		const { options } = build({
+			resource: 'pdf',
+			operation: 'createEinvoice',
+			file: 'https://example.com/invoice.pdf',
+			invoiceSource: 'xml',
+			xml: '<rsm:CrossIndustryInvoice/>',
+		});
+
+		expect(options.body).toEqual({ file: 'https://example.com/invoice.pdf', xml: '<rsm:CrossIndustryInvoice/>' });
+	});
+
 	it('nests the session ID in the analytics path', () => {
 		const { options } = build({
 			resource: 'analytics',

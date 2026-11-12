@@ -14,6 +14,7 @@ import { rawOutput } from '../../shared/output';
 const singleFileOperations = [
 	'addSecurity',
 	'compress',
+	'createEinvoice',
 	'deletePages',
 	'extractPages',
 	'fillForm',
@@ -23,6 +24,7 @@ const singleFileOperations = [
 	'overlay',
 	'read',
 	'readForm',
+	'readEinvoice',
 	'readMetadata',
 	'removeSecurity',
 	'rotate',
@@ -30,6 +32,7 @@ const singleFileOperations = [
 	'split',
 	'toImage',
 	'underlay',
+	'validateEinvoice',
 	'visualizeForm',
 ];
 
@@ -38,10 +41,12 @@ const alwaysAsyncOperations = [
 	'compress',
 	'convert',
 	'create',
+	'createEinvoice',
 	'ocrConvert',
 	'ocrRead',
 	'ocrSearch',
 	'toImage',
+	'validateEinvoice',
 ];
 
 /** Operations where the caller decides between an inline result and a job ID. */
@@ -53,6 +58,7 @@ const optionalAsyncOperations = [
 	'merge',
 	'overlay',
 	'read',
+	'readEinvoice',
 	'readForm',
 	'readMetadata',
 	'removeSecurity',
@@ -138,6 +144,16 @@ export const pdfOperations: INodeProperties[] = [
 				description: 'Render pages as PNG, JPEG or TIFF. Always runs asynchronously.',
 				routing: {
 					request: { method: 'POST', url: '/pdf/file/to-image' },
+					output: rawOutput,
+				},
+			},
+			{
+				name: 'Create E-Invoice',
+				value: 'createEinvoice',
+				action: 'Create electronic invoice',
+				description: 'Turn a PDF invoice into a ZUGFeRD / Factur-X e-invoice by embedding the invoice data as XML',
+				routing: {
+					request: { method: 'POST', url: '/pdf/einvoice/create' },
 					output: rawOutput,
 				},
 			},
@@ -242,6 +258,16 @@ export const pdfOperations: INodeProperties[] = [
 				},
 			},
 			{
+				name: 'Read E-Invoice',
+				value: 'readEinvoice',
+				action: 'Read electronic invoice',
+				description: 'Read the invoice data and XML of a ZUGFeRD, Factur-X or XRechnung PDF',
+				routing: {
+					request: { method: 'POST', url: '/pdf/einvoice/read' },
+					output: rawOutput,
+				},
+			},
+			{
 				name: 'Read Form',
 				value: 'readForm',
 				action: 'Read PDF form',
@@ -312,6 +338,16 @@ export const pdfOperations: INodeProperties[] = [
 				},
 			},
 			{
+				name: 'Validate E-Invoice',
+				value: 'validateEinvoice',
+				action: 'Validate electronic invoice',
+				description: 'Check a ZUGFeRD, Factur-X or XRechnung PDF against the e-invoice rules and list every violation',
+				routing: {
+					request: { method: 'POST', url: '/pdf/einvoice/validate' },
+					output: rawOutput,
+				},
+			},
+			{
 				name: 'Visualize Form',
 				value: 'visualizeForm',
 				action: 'Visualize PDF form',
@@ -348,6 +384,69 @@ export const pdfFields: INodeProperties[] = [
 		description:
 			'Publicly reachable URL of the Office file: docx, doc, xlsx, xls, pptx, ppt, odt, ods, odp or rtf',
 		routing: { send: { type: 'body', property: 'file' } },
+	},
+	{
+		displayName: 'Invoice Source',
+		name: 'invoiceSource',
+		type: 'options',
+		options: [
+			{
+				name: 'Invoice Data',
+				value: 'data',
+				description: 'Build the invoice XML from the invoice data, with the totals calculated',
+			},
+			{
+				name: 'Invoice XML',
+				value: 'xml',
+				description: 'Embed a ready ZUGFeRD, Factur-X or XRechnung XML',
+			},
+		],
+		default: 'data',
+		displayOptions: showFor('pdf', ['createEinvoice']),
+	},
+	{
+		displayName: 'Invoice Data',
+		name: 'invoice',
+		type: 'json',
+		default:
+			'{\n  "number": "RE-2026-0042",\n  "issue_date": "2026-11-11",\n  "currency": "EUR",\n  "seller": { "name": "Acme GmbH", "vat_id": "DE123456789", "address": { "city": "Berlin", "postcode": "10115", "country": "DE" } },\n  "buyer": { "name": "Contoso AG", "address": { "city": "Hamburg", "postcode": "20095", "country": "DE" } },\n  "payment": { "iban": "DE02120300000000202051" },\n  "lines": [{ "name": "Consulting", "quantity": 8, "unit": "HUR", "unit_price": 120, "vat_rate": 19 }]\n}',
+		required: true,
+		displayOptions: showFor('pdf', ['createEinvoice'], { invoiceSource: ['data'] }),
+		description:
+			'The invoice as JSON, with the fields of the API reference. Number, issue date, currency, seller, buyer and lines are required.',
+		routing: {
+			send: {
+				type: 'body',
+				property: 'invoice',
+				value: '={{ typeof $value === "string" ? JSON.parse($value) : $value }}',
+			},
+		},
+	},
+	{
+		displayName: 'Profile',
+		name: 'level',
+		type: 'options',
+		options: [
+			{ name: 'Basic', value: 'BASIC' },
+			{ name: 'EN 16931', value: 'EN 16931' },
+			{ name: 'Extended', value: 'EXTENDED' },
+			{ name: 'XRechnung', value: 'XRECHNUNG' },
+		],
+		default: 'EN 16931',
+		displayOptions: showFor('pdf', ['createEinvoice'], { invoiceSource: ['data'] }),
+		description: 'The e-invoice profile. XRechnung is the profile German public authorities expect.',
+		routing: { send: { type: 'body', property: 'level' } },
+	},
+	{
+		displayName: 'Invoice XML',
+		name: 'xml',
+		type: 'string',
+		typeOptions: { rows: 6 },
+		default: '',
+		required: true,
+		displayOptions: showFor('pdf', ['createEinvoice'], { invoiceSource: ['xml'] }),
+		description: 'A Cross Industry Invoice XML. Its profile is read from the XML.',
+		routing: { send: { type: 'body', property: 'xml' } },
 	},
 	{
 		displayName: 'HTML',
@@ -875,6 +974,7 @@ export const pdfFields: INodeProperties[] = [
 			'extractPages',
 			'merge',
 			'read',
+			'readEinvoice',
 			'readForm',
 			'readMetadata',
 			'rotate',
@@ -886,7 +986,7 @@ export const pdfFields: INodeProperties[] = [
 		[
 			webhookUrlOption(true),
 				],
-		showFor('pdf', ['compress', 'convert', 'ocrConvert', 'ocrRead']),
+		showFor('pdf', ['compress', 'convert', 'createEinvoice', 'ocrConvert', 'ocrRead', 'validateEinvoice']),
 	),
 
 	{

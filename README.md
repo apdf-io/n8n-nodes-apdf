@@ -232,8 +232,8 @@ The operations of the Apdf PDF API: **Create From HTML**, **Convert From Office*
 **Merge**, **Split**, **Compress**, **Convert to Image**, **Extract Pages**, **Delete
 Pages**, **Rotate Pages**, **Overlay Pages**, **Underlay Pages**, **Search Content**,
 **Read Content**, **OCR Convert**, **OCR Search Content**, **OCR Read Content**, **Read
-Form**, **Fill Form**, **Visualize Form**, **Add Security**, **Remove Security** and **Read
-Metadata**.
+Form**, **Fill Form**, **Visualize Form**, **Create E-Invoice**, **Read E-Invoice**,
+**Validate E-Invoice**, **Add Security**, **Remove Security** and **Read Metadata**.
 
 Every operation takes its source as a publicly reachable URL. Operations that change a PDF
 return a new file and never modify the source, including **Delete Pages**.
@@ -252,6 +252,18 @@ The form operations work together:
 - **Visualize Form** renders the form pages as images with a numbered box on every field, and
   lists which field each number is. Hand the images to an AI step, so it can tell which field
   to fill even when the names say nothing, like `Text12`.
+
+The e-invoice operations work together:
+
+- **Create E-Invoice** turns a PDF invoice into a ZUGFeRD / Factur-X e-invoice. Give the
+  invoice as JSON under **Invoice Data**, with the fields of the
+  [API reference](https://apdf.io/docs#pdf-einvoice-create), and pick the **Profile**; the
+  line amounts, VAT breakdown and totals are calculated. Or set **Invoice Source** to
+  *Invoice XML* to embed an XML you already have. An invoice that breaks a rule of its profile
+  fails the job with every violation.
+- **Read E-Invoice** returns the invoice data and the XML of a ZUGFeRD, Factur-X or XRechnung
+  PDF, such as an invoice you received.
+- **Validate E-Invoice** checks such a PDF and lists every rule it breaks.
 
 ### Automation
 
